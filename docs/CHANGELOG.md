@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-04-14 — Reset command
+_git: `bc26fe9` → `ca332ef`_
+
+### Added
+- **`todo reset`** — clear all todos, with interactive `y/N` confirmation prompt
+- **`--force` / `-f` flag** — skip the confirmation prompt (for scripting)
+- Empty-list guard: prints "Nothing to reset." if there are no todos
+
+---
+
 ## 2026-04-14 — Date support & list filtering
 _git: `e91d6b2` → `8b84a3a`_
 
