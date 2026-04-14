@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/fatih/color"
 	"todo/cmd"
@@ -181,5 +182,52 @@ func TestDeleteInvalidID(t *testing.T) {
 	_, err := run(t, "delete", "abc")
 	if err == nil {
 		t.Error("expected error for non-integer ID")
+	}
+}
+
+func TestUndoneMarksTodoPending(t *testing.T) {
+	p := setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	run(t, "done", "1")
+	out, err := run(t, "undone", "1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Unmarked") {
+		t.Errorf("expected 'Unmarked' in output, got %q", out)
+	}
+	data, _ := os.ReadFile(p)
+	var todos []model.Todo
+	json.Unmarshal(data, &todos)
+	if todos[0].Done {
+		t.Error("expected todo[0].Done to be false after undone")
+	}
+}
+
+func TestUndoneNotFound(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "undone", "99")
+	if err == nil {
+		t.Error("expected error for non-existent ID")
+	}
+}
+
+func TestUndoneInvalidID(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "undone", "abc")
+	if err == nil {
+		t.Error("expected error for non-integer ID")
+	}
+}
+
+func TestAddSetsDateToToday(t *testing.T) {
+	p := setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	data, _ := os.ReadFile(p)
+	var todos []model.Todo
+	json.Unmarshal(data, &todos)
+	today := time.Now().UTC().Format(model.DateFormat)
+	if todos[0].Date != today {
+		t.Errorf("expected Date %q, got %q", today, todos[0].Date)
 	}
 }

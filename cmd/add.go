@@ -30,6 +30,7 @@ func newAddCmd() *cobra.Command {
 				Title:     title,
 				Done:      false,
 				CreatedAt: time.Now().UTC(),
+				Date:      time.Now().UTC().Format(model.DateFormat),
 			}
 			todos = append(todos, todo)
 			if err := storage.Save(todos); err != nil {
