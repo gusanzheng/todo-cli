@@ -231,3 +231,46 @@ func TestAddSetsDateToToday(t *testing.T) {
 		t.Errorf("expected Date %q, got %q", today, todos[0].Date)
 	}
 }
+
+func TestDateSetsDate(t *testing.T) {
+	p := setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	out, err := run(t, "date", "1", "2026-04-20")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "2026-04-20") {
+		t.Errorf("expected date in output, got %q", out)
+	}
+	data, _ := os.ReadFile(p)
+	var todos []model.Todo
+	json.Unmarshal(data, &todos)
+	if todos[0].Date != "2026-04-20" {
+		t.Errorf("expected Date '2026-04-20', got %q", todos[0].Date)
+	}
+}
+
+func TestDateInvalidFormat(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	_, err := run(t, "date", "1", "14-04-2026")
+	if err == nil {
+		t.Error("expected error for invalid date format")
+	}
+}
+
+func TestDateNotFound(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "date", "99", "2026-04-14")
+	if err == nil {
+		t.Error("expected error for non-existent ID")
+	}
+}
+
+func TestDateInvalidID(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "date", "abc", "2026-04-14")
+	if err == nil {
+		t.Error("expected error for non-integer ID")
+	}
+}
