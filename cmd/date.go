@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"todo/internal/model"
 	"todo/internal/storage"
 	"todo/internal/ui"
 )
@@ -21,7 +22,7 @@ func newDateCmd() *cobra.Command {
 				return fmt.Errorf("invalid id: %s", args[0])
 			}
 			dateStr := args[1]
-			if _, err := time.Parse("2006-01-02", dateStr); err != nil {
+			if _, err := time.Parse(model.DateFormat, dateStr); err != nil {
 				return fmt.Errorf("invalid date format: use YYYY-MM-DD")
 			}
 			todos, err := storage.Load()
