@@ -1,0 +1,24 @@
+# Compiled binary
+/todo
+
+# Build output
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of `go env GOPATH`/bin
+# (not applicable here but common in Go projects)
+
+# Go build cache
+/tmp/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

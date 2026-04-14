@@ -41,7 +41,7 @@ func Save(todos []model.Todo) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(Path(), data, 0644)
+	return os.WriteFile(Path(), data, 0600)
 }
 
 func NextID(todos []model.Todo) int {
