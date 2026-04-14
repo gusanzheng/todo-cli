@@ -376,9 +376,14 @@ func TestResetClearsAllTodos(t *testing.T) {
 	if !strings.Contains(out, "2") || !strings.Contains(out, "cleared") {
 		t.Errorf("expected confirmation with count, got %q", out)
 	}
-	data, _ := os.ReadFile(p)
+	data, err := os.ReadFile(p)
+	if err != nil {
+		t.Fatalf("could not read storage file: %v", err)
+	}
 	var todos []model.Todo
-	json.Unmarshal(data, &todos)
+	if err := json.Unmarshal(data, &todos); err != nil {
+		t.Fatalf("could not parse storage file: %v", err)
+	}
 	if len(todos) != 0 {
 		t.Errorf("expected 0 todos after reset, got %d", len(todos))
 	}
