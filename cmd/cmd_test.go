@@ -364,3 +364,33 @@ func TestListFilterInvalidArg(t *testing.T) {
 		t.Error("expected error for invalid filter argument")
 	}
 }
+
+func TestResetClearsAllTodos(t *testing.T) {
+	p := setupTempStorage(t)
+	run(t, "add", "Task A")
+	run(t, "add", "Task B")
+	out, err := run(t, "reset", "--force")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "2") || !strings.Contains(out, "cleared") {
+		t.Errorf("expected confirmation with count, got %q", out)
+	}
+	data, _ := os.ReadFile(p)
+	var todos []model.Todo
+	json.Unmarshal(data, &todos)
+	if len(todos) != 0 {
+		t.Errorf("expected 0 todos after reset, got %d", len(todos))
+	}
+}
+
+func TestResetEmptyList(t *testing.T) {
+	setupTempStorage(t)
+	out, err := run(t, "reset", "--force")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Nothing to reset") {
+		t.Errorf("expected 'Nothing to reset.' output, got %q", out)
+	}
+}
