@@ -17,9 +17,9 @@ func PrintList(w io.Writer, todos []model.Todo) {
 	green := color.New(color.FgGreen)
 	for _, t := range todos {
 		if t.Done {
-			green.Fprintf(w, "  %d  ●  %s\n", t.ID, t.Title)
+			green.Fprintf(w, "  %d  ●  %s  %s\n", t.ID, t.Date, t.Title)
 		} else {
-			fmt.Fprintf(w, "  %d  ○  %s\n", t.ID, t.Title)
+			fmt.Fprintf(w, "  %d  ○  %s  %s\n", t.ID, t.Date, t.Title)
 		}
 	}
 }

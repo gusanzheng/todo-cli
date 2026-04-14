@@ -54,3 +54,14 @@ func TestPrintSuccess(t *testing.T) {
 		t.Errorf("unexpected output: %q", buf.String())
 	}
 }
+
+func TestPrintListShowsDate(t *testing.T) {
+	var buf bytes.Buffer
+	todos := []model.Todo{
+		{ID: 1, Title: "Buy milk", Done: false, Date: "2026-04-14"},
+	}
+	ui.PrintList(&buf, todos)
+	if !strings.Contains(buf.String(), "2026-04-14") {
+		t.Errorf("expected date in output, got %q", buf.String())
+	}
+}
