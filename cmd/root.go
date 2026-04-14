@@ -11,6 +11,7 @@ func NewRootCmd() *cobra.Command {
 		Use:   "todo",
 		Short: "A minimal CLI todo tracker",
 	}
+	root.AddCommand(newAddCmd())
 	return root
 }
 
