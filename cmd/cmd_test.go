@@ -274,3 +274,93 @@ func TestDateInvalidID(t *testing.T) {
 		t.Error("expected error for non-integer ID")
 	}
 }
+
+func TestListShowsDoneItems(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	run(t, "done", "1")
+	out, err := run(t, "list")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Buy milk") {
+		t.Errorf("expected done todo in list output, got %q", out)
+	}
+}
+
+func TestListFilterDone(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Task A")
+	run(t, "add", "Task B")
+	run(t, "done", "1")
+	out, err := run(t, "list", "done")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Task A") {
+		t.Errorf("expected done todo in output, got %q", out)
+	}
+	if strings.Contains(out, "Task B") {
+		t.Errorf("expected undone todo excluded, got %q", out)
+	}
+}
+
+func TestListFilterUndone(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Task A")
+	run(t, "add", "Task B")
+	run(t, "done", "1")
+	out, err := run(t, "list", "undone")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.Contains(out, "Task A") {
+		t.Errorf("expected done todo excluded, got %q", out)
+	}
+	if !strings.Contains(out, "Task B") {
+		t.Errorf("expected undone todo in output, got %q", out)
+	}
+}
+
+func TestListFilterToday(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Today task")
+	run(t, "add", "Old task")
+	run(t, "date", "2", "2026-01-01")
+	out, err := run(t, "list", "today")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Today task") {
+		t.Errorf("expected today's todo in output, got %q", out)
+	}
+	if strings.Contains(out, "Old task") {
+		t.Errorf("expected old todo excluded, got %q", out)
+	}
+}
+
+func TestListFilterSpecificDate(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Task A")
+	run(t, "date", "1", "2026-04-14")
+	run(t, "add", "Task B")
+	run(t, "date", "2", "2026-04-15")
+	out, err := run(t, "list", "2026-04-14")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Task A") {
+		t.Errorf("expected Task A in output, got %q", out)
+	}
+	if strings.Contains(out, "Task B") {
+		t.Errorf("expected Task B excluded, got %q", out)
+	}
+}
+
+func TestListFilterInvalidArg(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "list", "not-a-date")
+	if err == nil {
+		t.Error("expected error for invalid filter argument")
+	}
+}
