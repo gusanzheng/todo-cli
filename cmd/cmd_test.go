@@ -115,3 +115,37 @@ func TestListPendingSymbol(t *testing.T) {
 		t.Errorf("expected pending symbol ○, got %q", out)
 	}
 }
+
+func TestDoneMarksTodo(t *testing.T) {
+	p := setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	out, err := run(t, "done", "1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Marked") {
+		t.Errorf("expected 'Marked' in output, got %q", out)
+	}
+	data, _ := os.ReadFile(p)
+	var todos []model.Todo
+	json.Unmarshal(data, &todos)
+	if !todos[0].Done {
+		t.Error("expected todo[0].Done to be true")
+	}
+}
+
+func TestDoneNotFound(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "done", "99")
+	if err == nil {
+		t.Error("expected error for non-existent ID")
+	}
+}
+
+func TestDoneInvalidID(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "done", "abc")
+	if err == nil {
+		t.Error("expected error for non-integer ID")
+	}
+}
