@@ -82,3 +82,36 @@ func TestAddPersistsToFile(t *testing.T) {
 		t.Errorf("unexpected file contents: %v", todos)
 	}
 }
+
+func TestListEmpty(t *testing.T) {
+	setupTempStorage(t)
+	out, err := run(t, "list")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "No todos yet") {
+		t.Errorf("expected empty message, got %q", out)
+	}
+}
+
+func TestListShowsTodos(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	run(t, "add", "Write tests")
+	out, err := run(t, "list")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Buy milk") || !strings.Contains(out, "Write tests") {
+		t.Errorf("expected both todos in output, got %q", out)
+	}
+}
+
+func TestListPendingSymbol(t *testing.T) {
+	setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	out, _ := run(t, "list")
+	if !strings.Contains(out, "○") {
+		t.Errorf("expected pending symbol ○, got %q", out)
+	}
+}
