@@ -149,3 +149,37 @@ func TestDoneInvalidID(t *testing.T) {
 		t.Error("expected error for non-integer ID")
 	}
 }
+
+func TestDeleteRemovesTodo(t *testing.T) {
+	p := setupTempStorage(t)
+	run(t, "add", "Buy milk")
+	out, err := run(t, "delete", "1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "Deleted") {
+		t.Errorf("expected 'Deleted' in output, got %q", out)
+	}
+	data, _ := os.ReadFile(p)
+	var todos []model.Todo
+	json.Unmarshal(data, &todos)
+	if len(todos) != 0 {
+		t.Errorf("expected 0 todos after delete, got %d", len(todos))
+	}
+}
+
+func TestDeleteNotFound(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "delete", "99")
+	if err == nil {
+		t.Error("expected error for non-existent ID")
+	}
+}
+
+func TestDeleteInvalidID(t *testing.T) {
+	setupTempStorage(t)
+	_, err := run(t, "delete", "abc")
+	if err == nil {
+		t.Error("expected error for non-integer ID")
+	}
+}
