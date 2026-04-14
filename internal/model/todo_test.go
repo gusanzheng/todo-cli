@@ -41,3 +41,14 @@ func TestTodoZeroValue(t *testing.T) {
 		t.Error("expected Done to be false")
 	}
 }
+
+func TestTodoDateField(t *testing.T) {
+	todo := model.Todo{
+		ID:    1,
+		Title: "Buy milk",
+		Date:  "2026-04-14",
+	}
+	if todo.Date != "2026-04-14" {
+		t.Errorf("expected Date '2026-04-14', got %q", todo.Date)
+	}
+}
