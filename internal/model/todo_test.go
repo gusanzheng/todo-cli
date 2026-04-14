@@ -46,9 +46,9 @@ func TestTodoDateField(t *testing.T) {
 	todo := model.Todo{
 		ID:    1,
 		Title: "Buy milk",
-		Date:  "2026-04-14",
+		Date:  "2000-01-01",
 	}
-	if todo.Date != "2026-04-14" {
-		t.Errorf("expected Date '2026-04-14', got %q", todo.Date)
+	if todo.Date != "2000-01-01" {
+		t.Errorf("expected Date '2000-01-01', got %q", todo.Date)
 	}
 }
