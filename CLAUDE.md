@@ -26,6 +26,16 @@ todo date <id> 2026-04-14   # change the date on an item
 todo delete <id>
 ```
 
+## Feature Completion Checklist
+
+When a feature is finished, you must:
+
+1. Update `docs/CHANGELOG.md` with the new feature or change.
+2. Build and install the binary:
+   ```bash
+   go build ./... && go install .
+   ```
+
 ## Architecture
 
 This is a Go CLI todo tracker (module `todo`) built with [Cobra](https://github.com/spf13/cobra) and [fatih/color](https://github.com/fatih/color).
